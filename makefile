@@ -1,9 +1,11 @@
 CC = gcc
-CFLAGS = -Wall -lpng -g -o mandelview
-SRC = mandelbrot.c pixbuf.c
+CFLAGS = -Wall -lpng -g -fopenmp
+OBJ = mandelbrot_basic.o pixbuf.o mandelview.o
 
-mandelview: $(SRC)
-	$(CC) $(CFLAGS) $(SRC)
+mandelview: $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o mandelview
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 tags:
 	etags -a `(ls *.[ch])`
 clean:
