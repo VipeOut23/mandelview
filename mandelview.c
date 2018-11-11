@@ -9,7 +9,7 @@
 
 int main()
 {
-	int iterations = 500;
+	int iterations = 250;
 	int depth      = 20;
 	double zoom    = 1.5;
 
@@ -26,10 +26,9 @@ int main()
 	vb.br.imag = -2.0;
 
 	center.real = 0.332711;
-
 	center.imag = -0.53575;
 	
-	pixbuf_new(&pb, 400, 400);
+	pixbuf_new(&pb, 1000, 1000);
 
  calculate:
 	then = clock();

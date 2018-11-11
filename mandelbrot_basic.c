@@ -76,6 +76,7 @@ void calculate(pixbuf_t *pb, const struct viewbox *vb, const int iterations)
 	pixel_t        *p;
 	int            it;
 		
+#pragma omp parallel for schedule(dynamic, 10) private(c, p, it)
 	for(off_t y = 0; y < pb->height; ++y) {
 		for(off_t x = 0; x < pb->width; ++x) {
 			p = pixbuf_pixel(pb, x, y);
