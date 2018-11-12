@@ -28,9 +28,9 @@ int main()
 	center.real = 0.332711;
 	center.imag = -0.53575;
 	
-	pixbuf_new(&pb, 1000, 1000);
+	pixbuf_new(&pb, 500, 500);
 
- calculate:
+calculate:
 	then = clock();
 	calculate(pb, &vb, iterations);
 	time_used = clock() - then;

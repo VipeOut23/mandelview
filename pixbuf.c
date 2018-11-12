@@ -21,7 +21,7 @@ void pixbuf_destroy(pixbuf_t *buf)
 
 pixel_t *pixbuf_pixel(pixbuf_t *buf, const off_t x, const off_t y)
 {
-	return (pixel_t *) buf->buf + (buf->width*y+x);
+	return &buf->buf[y*buf->width + x];
 }
 
 int pixbuf_save_png(pixbuf_t *buf, const char *file)
