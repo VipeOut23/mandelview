@@ -4,7 +4,7 @@
 
 
 void center_viewbox(struct viewbox *v, const struct complex center,
-			   const double zoom)
+					const double zoom)
 {
 	double x_dist;
 	double y_dist;
@@ -22,8 +22,8 @@ void center_viewbox(struct viewbox *v, const struct complex center,
 }
 
 static inline struct complex translate_pixel_pos(const int x, const int x_dist,
-						 const int y, const int y_dist,
-						 const struct viewbox *v)
+												 const int y, const int y_dist,
+												 const struct viewbox *v)
 {
 	struct complex c;
 	double	       x_rel;
@@ -76,7 +76,7 @@ void calculate(pixbuf_t *pb, const struct viewbox *vb, const int iterations)
 	pixel_t        *p;
 	int            it;
 		
-#pragma omp parallel for schedule(dynamic, 10) private(c, p, it)
+#pragma omp parallel for schedule(dynamic) private(c, p, it)
 	for(off_t y = 0; y < pb->height; ++y) {
 		for(off_t x = 0; x < pb->width; ++x) {
 			p = pixbuf_pixel(pb, x, y);

@@ -10,8 +10,8 @@
 int main()
 {
 	int iterations = 250;
-	int depth      = 20;
-	double zoom    = 1.5;
+	int depth      = 30;
+	double zoom    = 1.7;
 
 	pixbuf_t *pb;
 	struct viewbox vb;
@@ -25,9 +25,9 @@ int main()
 	vb.br.real = 2.0;
 	vb.br.imag = -2.0;
 
-	center.real = 0.332711;
-	center.imag = -0.53575;
-	
+	center.real = -0.74995;
+	center.imag = 0.02288;
+
 	pixbuf_new(&pb, 500, 500);
 
 calculate:

@@ -1,8 +1,10 @@
 #include "pixbuf.h"
 
 #include <stdio.h>
+#include <unistd.h>
 #include <png.h>
 #include <setjmp.h>
+#include <string.h>
 
 void pixbuf_new(pixbuf_t **buf, const size_t width, const size_t height)
 {
@@ -22,6 +24,48 @@ void pixbuf_destroy(pixbuf_t *buf)
 pixel_t *pixbuf_pixel(pixbuf_t *buf, const off_t x, const off_t y)
 {
 	return &buf->buf[y*buf->width + x];
+}
+
+int pixbuf_copy(pixbuf_t *dest, pixbuf_t *src)
+{
+		if(!src || !dest ||
+		   src->width != dest->width ||
+		   src->height != dest->height)
+				return -1;
+
+		memcpy(dest->buf, src->buf, src->height*src->width*sizeof(struct __PIXEL));
+		return 0;
+}
+
+int pixbuf_pixflood(pixbuf_t *buf, pixbuf_t *diff, int fd, int sx, int sy)
+{
+		int yoff;
+		int written;
+		char str[128];
+		pixel_t *p;
+
+		for(int y = 0; y < buf->height; ++y) {
+				yoff = sy+y;
+				for(int x = 0; x < buf->width; ++x) {
+						p = pixbuf_pixel(buf, x, y);
+
+						/* do not redraw equal pixels */
+						if( diff && !memcmp(p, pixbuf_pixel(diff, x, y), sizeof(pixel_t)) )
+								goto next;
+
+						written = sprintf(str, "PX %d %d %02x%02x%02x\n",
+										  x+sx, yoff, p->r, p->g, p->b);
+
+						if( write(fd, str, written) == -1 ) {
+								perror("write()");
+								return 1;
+						}
+				next:;
+
+}
+		}
+
+		return 0;
 }
 
 int pixbuf_save_png(pixbuf_t *buf, const char *file)
