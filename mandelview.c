@@ -7,6 +7,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <signal.h>
 
 #include "mandelbrot_basic.h"
 #include "pixbuf.h"
@@ -45,6 +46,7 @@ int main(int argc, char **argv)
 	addr.sin_family = AF_INET;
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
+	signal(SIGPIPE, SIG_IGN);
 	if( connect(sockfd, (struct sockaddr*) &addr, sizeof(addr)) ) {
 			perror("connect");
 			return 1;
