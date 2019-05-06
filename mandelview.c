@@ -3,22 +3,30 @@
 #include <errno.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 #include "mandelbrot_basic.h"
 #include "pixbuf.h"
 
-int main()
+int main(int argc, char **argv)
 {
 	int iterations = 250;
 	int depth      = 30;
 	double zoom    = 1.7;
 
-	pixbuf_t *pb;
+	pixbuf_t *pb, *pb_old;
 	struct viewbox vb;
 	struct complex center;
-	int ret;
-	char buf[255];
 	clock_t then, time_used, total = 0;
+
+	struct sockaddr_in addr;
+	int sockfd;
+
+	if(argc < 2)
+			return 1;
 
 	vb.tl.real = -2.0;
 	vb.tl.imag = 2.0;
@@ -28,9 +36,22 @@ int main()
 	center.real = -0.74995;
 	center.imag = 0.02288;
 
-	pixbuf_new(&pb, 500, 500);
+	pixbuf_new(&pb, 400, 400);
+	pixbuf_new(&pb_old, pb->width, pb->height);
+
+	addr.sin_addr.s_addr = inet_addr(argv[1]);
+	addr.sin_port = htons(1234);
+	addr.sin_family = AF_INET;
+	sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+	if( connect(sockfd, (struct sockaddr*) &addr, sizeof(addr)) ) {
+			perror("connect");
+			return 1;
+	}
 
 calculate:
+	pixbuf_copy(pb_old, pb);
+
 	then = clock();
 	calculate(pb, &vb, iterations);
 	time_used = clock() - then;
@@ -38,23 +59,8 @@ calculate:
 
 	printf("Time: %lfs\n", ((double)time_used / CLOCKS_PER_SEC));
 
-	sprintf(buf, "rendered/%d.png", depth);
-	if( (ret = pixbuf_save_png(pb, buf)) ) {
-		switch((pngerror_t)ret) {
-		case libpng:
-			fputs("libpng error...\n", stderr);
-			break;
-		case pnggen:
-			fputs("Error, while generating png...\n", stderr);
-			break;
-		case io:
-			fprintf(stderr, "Could not write to %s: %s\n",
-				buf, strerror(errno));
-			break;
-		default:;
-		}
-		return -1;
-	}
+	if( pixbuf_pixflood(pb, pb_old, sockfd, 0, 0) )
+			return -1;
 
 	if(--depth) {
 		center_viewbox(&vb, center, zoom);
@@ -64,6 +70,7 @@ calculate:
 	printf("Total: %lfs\n", ((double)total / CLOCKS_PER_SEC));
 
 	pixbuf_destroy(pb);
+	pixbuf_destroy(pb_old);
 
 	return 0;
 }
