@@ -37,6 +37,8 @@ pixel_t *pixbuf_pixel(pixbuf_t *buf, const off_t x, const off_t y);
 
 int pixbuf_copy(pixbuf_t *dest, pixbuf_t *src);
 
+void pixbuf_set(pixbuf_t *buf, pixel_t p);
+
 int pixbuf_save_png(pixbuf_t *buf, const char *file);
 
 int pixbuf_pixflood(pixbuf_t *buf, pixbuf_t *diff, int fd, int sx, int sy);

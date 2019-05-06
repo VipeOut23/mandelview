@@ -45,6 +45,18 @@ int pixbuf_copy(pixbuf_t *dest, pixbuf_t *src)
 		return 0;
 }
 
+void pixbuf_set(pixbuf_t *buf, pixel_t p)
+{
+		int off;
+
+		for(int y = 0; y < buf->height; ++y) {
+				off = buf->height*y;
+				for(int x = 0; x < buf->width; ++x) {
+						buf->buf[off + x] = p;
+				}
+		}
+}
+
 int pixbuf_pixflood(pixbuf_t *buf, pixbuf_t *diff, int fd, int sx, int sy)
 {
 		int yoff;
@@ -70,7 +82,7 @@ int pixbuf_pixflood(pixbuf_t *buf, pixbuf_t *diff, int fd, int sx, int sy)
 						}
 				next:;
 
-}
+				}
 		}
 
 		return 0;

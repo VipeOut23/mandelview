@@ -14,9 +14,9 @@
 
 int main(int argc, char **argv)
 {
-	int iterations = 2500;
-	int depth      = 30;
-	double zoom    = 1.7;
+	int iterations = 1500;
+	int depth      = 40;
+	double zoom    = 1.6;
 
 	pixbuf_t *pb, *pb_old;
 	struct viewbox vb;
@@ -27,22 +27,30 @@ int main(int argc, char **argv)
 	struct sockaddr_in addr;
 	int sockfd;
 
-	if(argc < 2)
-			return 1;
+	short port = 1234;
+
+	switch(argc) {
+	case 2: break;
+	case 3: port = atoi(argv[2]);
+			break;
+	case 4: iterations = atoi(argv[3]);
+			break;
+	default: return 1;
+	}
 
 	vb.tl.real = -2.0;
 	vb.tl.imag = 2.0;
 	vb.br.real = 2.0;
 	vb.br.imag = -2.0;
 
-	center.real = -0.74995;
-	center.imag = 0.02288;
+	center.real = -0.749948;
+	center.imag = 0.022877;
 
-	pixbuf_new(&pb, 400, 400);
+	pixbuf_new(&pb, 300, 300);
 	pixbuf_new(&pb_old, pb->width, pb->height);
 
 	addr.sin_addr.s_addr = inet_addr(argv[1]);
-	addr.sin_port = htons(1234);
+	addr.sin_port = htons(port);
 	addr.sin_family = AF_INET;
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -51,6 +59,8 @@ int main(int argc, char **argv)
 			perror("connect()");
 			return 1;
 	}
+
+	pixbuf_set(pb, (pixel_t){.r = 255, .g = 255, .b = 255});
 
 calculate:
 	pixbuf_copy(pb_old, pb);

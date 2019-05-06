@@ -75,17 +75,20 @@ void calculate(pixbuf_t *pb, const struct viewbox *vb, const int iterations)
 	struct complex c;
 	pixel_t        *p;
 	int            it;
+	double		   factor;
 		
-#pragma omp parallel for schedule(dynamic) private(c, p, it)
+#pragma omp parallel for schedule(dynamic) private(c, p, it, factor)
 	for(off_t y = 0; y < pb->height; ++y) {
 		for(off_t x = 0; x < pb->width; ++x) {
 			p = pixbuf_pixel(pb, x, y);
 			c = translate_pixel_pos(x, pb->width, y, pb->height, vb);
 			it = calculate_iterations(&c, iterations);
 
-			p->r = 255 * ((float)it/(float)iterations);
-			p->g = 100 * ((float)it/(float)iterations);
-			p->b = 55  * ((float)it/(float)iterations);
+			factor = (double)it/(double)iterations;
+
+			p->r = 255 * factor;
+			p->g = 100 * factor;
+			p->b = 55  * factor;
 		}
 	}
 }
