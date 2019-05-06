@@ -20,7 +20,8 @@ int main(int argc, char **argv)
 	pixbuf_t *pb, *pb_old;
 	struct viewbox vb;
 	struct complex center;
-	clock_t then, time_used, total = 0;
+	clock_t then, time_used;
+	clock_t total_render = 0, total_send = 0;
 
 	struct sockaddr_in addr;
 	int sockfd;
@@ -55,19 +56,25 @@ calculate:
 	then = clock();
 	calculate(pb, &vb, iterations);
 	time_used = clock() - then;
-	total += time_used;
+	total_render += time_used;
 
-	printf("Time: %lfs\n", ((double)time_used / CLOCKS_PER_SEC));
+	printf("Render time: %lfs\n", ((double)time_used / CLOCKS_PER_SEC));
 
+	then = clock();
 	if( pixbuf_pixflood(pb, pb_old, sockfd, 0, 0) )
 			return -1;
+	time_used = clock() - then;
+	total_send += time_used;
+
+	printf("Send time: %lfs\n", ((double)time_used / CLOCKS_PER_SEC));
 
 	if(--depth) {
 		center_viewbox(&vb, center, zoom);
 		goto calculate;
 	}
 
-	printf("Total: %lfs\n", ((double)total / CLOCKS_PER_SEC));
+	printf("Total render: %lfs\n", ((double)total_render / CLOCKS_PER_SEC));
+	printf("Total send:   %lfs\n", ((double)total_send / CLOCKS_PER_SEC));
 
 	pixbuf_destroy(pb);
 	pixbuf_destroy(pb_old);
