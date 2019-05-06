@@ -27,6 +27,8 @@ enum __PNGERROR {
 };
 typedef enum __PNGERROR pngerror_t;
 
+int pixel_equal(pixel_t *a, pixel_t *b);
+
 void pixbuf_new(pixbuf_t **buf, const size_t width, const size_t height);
 
 void pixbuf_destroy(pixbuf_t *buf);

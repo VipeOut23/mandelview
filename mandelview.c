@@ -14,7 +14,7 @@
 
 int main(int argc, char **argv)
 {
-	int iterations = 250;
+	int iterations = 2500;
 	int depth      = 30;
 	double zoom    = 1.7;
 
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
 
 	signal(SIGPIPE, SIG_IGN);
 	if( connect(sockfd, (struct sockaddr*) &addr, sizeof(addr)) ) {
-			perror("connect");
+			perror("connect()");
 			return 1;
 	}
 

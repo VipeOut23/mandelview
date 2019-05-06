@@ -6,6 +6,14 @@
 #include <setjmp.h>
 #include <string.h>
 
+int pixel_equal(pixel_t *a, pixel_t *b)
+{
+		return a && b &&
+				a->r == b->r &&
+				a->g == b->g &&
+				a->b == b->b;
+}
+
 void pixbuf_new(pixbuf_t **buf, const size_t width, const size_t height)
 {
 	*buf = malloc(sizeof(struct __PIXBUF));
@@ -50,7 +58,7 @@ int pixbuf_pixflood(pixbuf_t *buf, pixbuf_t *diff, int fd, int sx, int sy)
 						p = pixbuf_pixel(buf, x, y);
 
 						/* do not redraw equal pixels */
-						if( diff && !memcmp(p, pixbuf_pixel(diff, x, y), sizeof(pixel_t)) )
+						if( diff && pixel_equal(p, pixbuf_pixel(diff, x, y)) )
 								goto next;
 
 						written = sprintf(str, "PX %d %d %02x%02x%02x\n",
